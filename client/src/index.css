@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-900 text-white; /* Use the color value you prefer */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar {
+  width: 8px; /* Adjust the width as needed */
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-500;  /* Change the color as needed */
+  border-radius: 4px; /* Adjust the border radius as needed */
+}
+
+/* Style the scrollbar track on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #357abd; /* Change the hover color as needed */
+}
