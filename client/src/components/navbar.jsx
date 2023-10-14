@@ -1,24 +1,26 @@
 import React, { useState, useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Auth from './auth';
 import { UserContext } from '../userContext';
+import '../index.css'
 import ProfileModal from './profileModal';
 
 const Navbar = () => {
+  const navigate = useNavigate(); 
   const { profile, setProfile } = useContext(UserContext);
-  const [showModal, setShowModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const openModal = () => {
     if (!profile) {
-      setShowModal(true);
+      setShowAuthModal(true);
     } else {
       toggleProfileMenu(); // Call the toggleProfileMenu function when profile is already set
     }
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setShowAuthModal(false);
     setShowProfileMenu(false);
   };
 
@@ -31,7 +33,10 @@ const Navbar = () => {
     return (
       <>
         <li className="text-gray-200 px-3 text-md p-2 hover:font-semibold hover:text-white hover:text-indigo-500">
-          <NavLink to={url}>{value}</NavLink>
+          <button onClick={() => {
+            setShowProfileMenu(false);
+            navigate(url); 
+          }}>{value}</button>
         </li>
       </>
     );
@@ -39,7 +44,11 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`bg-gray-800 text-white p-4 flex justify-between`}>
+      <nav
+        className={`bg-gray-800 text-white p-4 flex justify-between ${
+          showProfileMenu ? 'blur-background' : '' // Apply the blur class conditionally
+        }`}
+      >
         <NavLink to="/" className="text-lg font-semibold">
           Social
         </NavLink>
@@ -61,25 +70,26 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {showModal && !profile && <Auth onClose={closeModal} />}
+      {showAuthModal && !profile && <Auth onClose={closeModal} />}
       {showProfileMenu && (
-        <div className="absolute right-0 border border-slate-700 bg-gray-800 rounded-b-md shadow-sm w-40 transition-all duration-1000">
-          {profile && (
-            <ul className="py-1">
-              {getProfileItem('View Profile', `/profile/${profile?._id}`)}
-              {getProfileItem('Edit Profile', `/update-profile`)}
-              {getProfileItem('Connections', '/home/connections')}
-              {getProfileItem('Groups', '/groups')}
-              <button
-                onClick={(e) => {
-                  handleLogout(e);
-                }}
-                className="text-gray-200 px-3 text-md p-2 hover:font-semibold hover:text-white hover:text-indigo-500"
-              >
-                Logout
-              </button>
-            </ul>
-          )}
+        <div className="full-screen-overlay">
+          <div className="absolute override right-0 border border-slate-700 bg-gray-800 rounded-b-md shadow-sm w-40 transition-all duration-1000">
+            {profile && (
+              <ul className="py-1">
+                {getProfileItem('View Profile', `/profile/${profile?._id}`)}
+                {getProfileItem('Connections', '/home/connections')}
+                {getProfileItem('Groups', '/groups')}
+                <button
+                  onClick={(e) => {
+                    handleLogout(e);
+                  }}
+                  className="text-gray-200 px-3 text-md p-2 hover:font-semibold hover:text-white hover:text-indigo-500"
+                >
+                  Logout
+                </button>
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </>

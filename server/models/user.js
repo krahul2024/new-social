@@ -7,8 +7,8 @@ const userSchema = new Schema({
     email: String,
     username: String,
     password: String,
-    profilePicture: String,
-    coverImage: String,
+    profileImage: {},
+    coverImage: {},
     connections: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -34,7 +34,11 @@ const userSchema = new Schema({
     groups: [{
         type: Schema.Types.ObjectId,
         ref: 'Group'
-    }]
+    }], 
+    savedPosts:[{
+        type:Schema.Types.ObjectId, 
+        ref:'Post'
+    }],
     // settings:{}
 }, { timestamps: true });
 

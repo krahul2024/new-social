@@ -1,13 +1,24 @@
-import React, { useState , useContext} from 'react';
+import React, { useState , useContext, useEffect} from 'react';
 import {NavLink} from 'react-router-dom'; 
 import axios from 'axios'; 
 import {UserContext} from '../userContext'
+import Image from './image'
+import Auth from './auth'
 
-const NewPost = () => {
-  const {profile, setProfile, setPosts} = useContext(UserContext); 
+const NewPost = ({type}) => {
+  const {profile, setProfile, posts, setPosts, currPost, setCurrPost} = useContext(UserContext); 
   const [caption, setCaption] = useState(''); 
   const[videos, setVideos] = useState([]); 
   const[links, setLink] = useState([]); 
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const openModal = () => {
+    setShowAuthModal(true);
+  };
+
+  const closeModal = () => {
+    setShowAuthModal(false);
+  };
 
   // image previews 
   const[previews, setPreviews] = useState([]); 
@@ -29,8 +40,6 @@ const NewPost = () => {
   	})
   }
 
-  // console.log({previews})
-
   const removeImage = (index) => {
   	setPreviews((prevPreviews) => 
   		prevPreviews.filter((_, i) => i !== index) 
@@ -47,26 +56,38 @@ const NewPost = () => {
 
   		// upload the images 
   		const imageResponse = await axios.post('/upload/images', data , {withCredentials:true})
-  		console.log({data : imageResponse?.data})
+  		// console.log({data : imageResponse?.data})
 
-  	// create new post 
-  		const postResponse = await axios.post('/post/new', {
-  			caption ,
-  			photos : imageResponse?.data?.images , 
-  			by : profile?._id
-  		}, {withCredentials : true})
-  		
-  		console.log({data : postResponse?.data})
-  		if(postResponse?.data){
-  			const {post, user} = postResponse.data 
-  			setPosts((prev) => [...prev, post])
-  			setProfile(user)
-  		}
-  		// empty the input fields after the successful creation of post
-  		if(postResponse?.data?.success){
+  		if(type == 'post'){
+	  		// console.log('creating a new post....')
+		  	const postResponse = await axios.post('/post/newPost' , {
+		  			caption ,
+		  			photos : imageResponse?.data?.images , 
+		  			by : profile?._id
+		  		}, {withCredentials : true})
+		  		
+		  		// console.log({data : postResponse?.data})
+		  		if(postResponse?.data){
+		  			const {post, user} = postResponse.data 
+		  			setPosts((prev) => [...prev, post])
+		  			setProfile(user)
+		  		}
+	  	}
+	  	else if(type == 'comment'){
+	  		// console.log('creating a new comment'); 
+	  		const commentResponse = await axios.post('/post/newComment', {
+	  			caption, photos:imageResponse?.data?.images, 
+	  			by:profile?._id, 
+	  			postId:currPost?._id
+	  		}, { withCredentials : true }); 
+	  		if(commentResponse?.data){
+	  			const post = commentResponse?.data.post; 
+	  			setCurrPost(post); 
+	  			console.log({post}); 
+	  		}
+	  	}
   			setPreviews([])
   			setCaption('')
-  		}
   	}
   	catch(error){
   		console.log({error})
@@ -75,38 +96,27 @@ const NewPost = () => {
 
 
 
-  return (
-    <div className="p-4 rounded-xl border-gray-500 min-w-[400px] w-[100%] max-w-[800px]">
-      	<div className="border rounded-lg border-gray-900">
-      	{/*user icon*/}
-			<div className="relative">
-			  <NavLink to="/profile" className="absolute left-2 top-3 border border-gray-600 rounded-full">
-			    <svg
-			      xmlns="http://www.w3.org/2000/svg"
-			      fill="none"
-			      viewBox="0 0 24 24"
-			      strokeWidth={1.5}
-			      stroke="currentColor"
-			      className="w-7 h-7"
-			    >
-			      <path
-			        strokeLinecap="round"
-			        strokeLinejoin="round"
-			        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-			      />
-			    </svg>
-			  </NavLink>
-			  <textarea
-			    placeholder="What's happening..."
-			    className="h-32 min-w-[400px] w-[100%] max-w-[800px] rounded-xl bg-gray-800 outline-none px-12 py-4"
-			    name="caption"
-			    value={caption}
-			    onChange = {(e) => setCaption(e.target.value)}
-			    id=""
-			    cols="30"
-			    rows="10"
-			  ></textarea>
-			</div>
+ if(profile) return (
+    <div className="rounded-xl w-full">
+      <div className="py-1 px-1">
+				<div className="relative">
+				  <NavLink to={`/profile/${profile?._id}`} className="absolute left-2 top-2 border border-gray-600 rounded-full">
+				    	<Image 
+				    		photo={profile?.profileImage?.name}
+				    		className="h-10 w-10 object-cover rounded-full"
+				    		/>
+				  </NavLink>
+				  <textarea
+				    placeholder={`${type=='comment'?'Comment your thoughts...':"What's going on..."}`}
+				    className="h-32 min-w-[400px] w-[100%] max-w-[800px] rounded-xl bg-gray-800 outline-none px-16 py-4 text-sm text-gray-200"
+				    name="caption"
+				    value={caption}
+				    onChange = {(e) => setCaption(e.target.value)}
+				    id=""
+				    cols="30"
+				    rows="10"
+				  ></textarea>
+				</div> 
 
       		
       		{/*image,  gif, video , link are*/}
@@ -125,9 +135,9 @@ const NewPost = () => {
       			</div>
       		))}
       		</div>
-      		<div className="flex gap-4 justify-between w-full px-4">
+      		<div className="flex gap-4 justify-between w-full px-4 text-gray-400">
       			<div className="flex gap-6">
-	      			<label htmlFor="image" className="cursor-pointer">
+	      			<label htmlFor="image" className="cursor-pointer hover:text-blue-500">
 	      				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
 					  		<path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
 						</svg>
@@ -136,7 +146,7 @@ const NewPost = () => {
 						type="file" multiple accepth=".png,.jpeg,.webp,.jpg" id="image"/>
 					
 
-					<label htmlFor="Gif" className="cursor-pointer">
+					<label htmlFor="Gif" className="cursor-pointer hover:text-blue-500">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
 						  <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 8.25v7.5m6-7.5h-3V12m0 0v3.75m0-3.75H18M9.75 9.348c-1.03-1.464-2.698-1.464-3.728 0-1.03 1.465-1.03 3.84 0 5.304 1.03 1.464 2.699 1.464 3.728 0V12h-1.5M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
 						</svg>
@@ -144,7 +154,7 @@ const NewPost = () => {
 					<input onChange={handleImageInputs} className="hidden"
 						type="file" multiple accepth=".png,.jpeg,.webp,.jpg,.gif" id="Gif"/>
 
-					<label htmlFor="vidoes" className="cursor-pointer">
+					<label htmlFor="vidoes" className="cursor-pointer hover:text-blue-500">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
 						  <path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
 						</svg>
@@ -152,14 +162,14 @@ const NewPost = () => {
 					<input onChange={handleImageInputs} className="hidden"
 						type="file" multiple accept="video/*" id="videos"/> 
 
-					<button>
+					<button className="hover:text-blue-500">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
 						  <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
 						</svg>
 					</button>
 				</div>
 				<button onClick={createNewPost}
-					className="">
+					className="hover:text-blue-600 brightness-125">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
 					  <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
 					</svg>
@@ -168,6 +178,16 @@ const NewPost = () => {
       	</div>
     </div>
   );
+	else return (<>
+		<div className="p-3">
+			<button onClick={openModal}
+				className={`w-full px-8 py-2 border-b-[1px] border-gray-800 hover:border-indigo-900 rounded-2xl text-gray-400 bg-gray-900 hover:shadow-sky-800 hover:text-indigo-600`}
+			>
+				Join the conversation, share what's going on...
+			</button>
+		</div>
+		{showAuthModal && !profile && <Auth onClose={closeModal} />}
+	</>)
 };
 
 export default NewPost;

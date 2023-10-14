@@ -16,12 +16,13 @@ const postSchema = new Schema({
     }],
     comments: [{
         type: Schema.Types.ObjectId,
-        ref: 'Post'
+        ref: 'Comment'
     }],
-    likes: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+    tags:[{
+        type:Schema.Types.ObjectId, 
+        ref:'User'
+    }], 
+    likes: [],
 }, {timestamps : true})
 
 export default model('Post', postSchema);

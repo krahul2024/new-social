@@ -5,11 +5,13 @@ export const UserContext = createContext({})
 
 export function UserContextProvider({ children }) {
 
-    const [profile, setProfile] = useState(null)
-    const [allConnections , setAllConnections] = useState(false)
-    const [posts, setPosts] = useState([])
-    const [postIndex, setPostIndex] = useState(-1)
-    const [currPost , setCurrPost] = useState(null)
+    const [profile, setProfile] = useState(null); 
+    const [isHome, setIsHome] = useState(false);
+    const [currPost, setCurrPost] = useState(null); 
+    const [posts, setPosts] = useState([]); 
+
+
+
 
     const getUser = async () => {
         try {
@@ -47,6 +49,7 @@ export function UserContextProvider({ children }) {
              		profile , setProfile, 
                     posts, setPosts, 
                     currPost, setCurrPost, 
+                    isHome, setIsHome
                 }} 
                 >{children}
               </UserContext.Provider> <

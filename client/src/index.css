@@ -21,3 +21,19 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #357abd; /* Change the hover color as needed */
 }
+
+
+/* Add this class for the full-screen overlay effect */
+.full-screen-overlay {
+  position: fixed;
+  top: 9;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.67); /* Semi-transparent black background for overlay effect */
+  z-index: 1000; /* Make sure it's on top of other elements */
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+  margin-right: 30px;
+}

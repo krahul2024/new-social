@@ -4,6 +4,8 @@ import axios from 'axios'
 import Navbar from './components/navbar'
 import Feed from './components/feed'
 import {UserContextProvider} from './userContext' 
+import Profile from './components/profile'
+import PostPage from './components/postPage'
 
 axios.defaults.baseURL = 'http://localhost:4000' 
 
@@ -16,6 +18,8 @@ function App() {
 
     <Routes>
         <Route path="/" element={<Feed />} /> 
+        <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/post/:postId" element={<PostPage />} />
     </Routes>
     </UserContextProvider>
     </>

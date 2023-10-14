@@ -8,9 +8,8 @@ const Image = ({ photo , ...rest }) => {
     return `${local}/${photo?.pad}${photo?.original}`
   }
 
-  // console.log({path:getName(photo)})
 
-  
+  // console.log({path:getName(photo)})
 if(photo) 
   return (
     <img src={getName(photo)} alt="image" {...rest} />

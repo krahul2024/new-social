@@ -9,13 +9,18 @@ const router = Router();
 
 // setting up multer 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function(req, file, cb) {
-        cb(null, file.originalname);
-    }
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const originalname = file.originalname;
+    const extension = originalname.split('.').pop(); // Get the file extension
+    const timestamp = Date.now();
+    const newFilename = `${originalname.replace(/\.[^/.]+$/, '')}_${timestamp}.${extension}`;
+    cb(null, newFilename);
+  },
 });
+
 
 
 const upload = multer({
