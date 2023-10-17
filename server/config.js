@@ -13,16 +13,19 @@ export const values = {
     time_out: 7 * 24 * 3600 * 1000
 }
 
-const uri = 'mongodb://127.0.0.1:27017/socialDB';
+// const uri = 'mongodb://127.0.0.1:27017/socialDB';
+const uri_live = `mongodb+srv://${values.mongo_username}:${values.mongo_password}@cluster0.payzx0b.mongodb.net/?retryWrites=true&w=majority`;
+
 export const connect_database = async () => {
   try {
-    await mongoose.connect(uri, {
+    await mongoose.connect(uri_live, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     console.log('Connected to the database successfully!');
   } catch (error) {
-    // Throw an error or return a promise rejection to handle the error in calling code
-    throw new Error(`Error connecting to the database: ${error}`);
+    console.error('Error connecting to the database:', error);
+    // Rethrow the error to propagate it to the calling code
+    throw error;
   }
 };

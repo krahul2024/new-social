@@ -6,9 +6,10 @@ import {UserContext} from '../userContext';
 import axios from 'axios'; 
 import Image from './image'
 import Header from './header'
+import About from './about'
 
 const Profile = () => {
-  const {posts, profile, currPost} = useContext(UserContext); 
+  const {profile, currPost} = useContext(UserContext); 
   const [user, setUser] = useState(null); 
   const location = useLocation(); 
   const path = location.pathname; 
@@ -26,10 +27,10 @@ const Profile = () => {
       console.log({error})
     }
   }
+
   useEffect(() => {
     getUserById();
-  },[profile])
-
+  },[])
 
   if(!user) return (
       <div className="flex justify-center items-center p-4 text-xl text-rose-600">
@@ -39,11 +40,20 @@ const Profile = () => {
     </div>
 )
 
+  if(!user) return null; 
+  console.log(user)
 
   return (<>
     <div className="flex flex-col items-center justify-center">
-      <div className="px-2 py-1 min-w-[480px] w-[80%] max-w-[860px]">
+      <div className="min-w-[480px] w-[80%] max-w-[860px]">
         <Header user={user}/>
+        <About user={user}/>
+        <div className="p-2">
+          {user.posts?.length>0 && user.posts.slice().reverse().map((post, index) => (
+            <Post post={post} user={user}/>
+          ))}
+        </div>
+        
     </div>
   </div>
  

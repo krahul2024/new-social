@@ -50,7 +50,7 @@ const PostPage = () => {
           </svg>
           Back to feed
         </button>
-        <Post post={currPost} />
+        <Post post={currPost} user={currPost.by}/>
         <NewPost type={'comment'}/>
         <Comments/>
       </div>

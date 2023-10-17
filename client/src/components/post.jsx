@@ -5,7 +5,7 @@ import Reactions from './reactions'
 import {UserContext} from '../userContext'
 
 
-const Post = ({ post }) => {
+const Post = ({ post , user }) => {
 	if(!post) return null; 
 	const [imgIdx, setImgIdx] = useState(0); 
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -20,6 +20,7 @@ const Post = ({ post }) => {
 	  };
 
 	  const renderCaption = () => {
+	  if(!(post.caption)) return null; 
 	  if (isExpanded) {
 	    const words = post?.caption.split(' ');
 	    if (words.length > 80) {
@@ -32,10 +33,10 @@ const Post = ({ post }) => {
 	        </>
 	      );
 	    } else {
-	      return post?.caption;
+	      return post.caption;
 	    }
 	  } else {
-	    const words = post?.caption.split(' ');
+	    const words = post.caption.split(' ');
 	    if (words.length > 80) {
 	      const shortenedCaption = words.slice(0, 80).join(' ');
 	      return (
@@ -47,12 +48,12 @@ const Post = ({ post }) => {
 	        </>
 	      );
 	    } else {
-	      return post?.caption;
+	      return post.caption;
 	    }
 	  }
 	};
 
-	
+console.log()
 if(post)
 	return (<> 
 		<div className="p-1 border-gray-800 rounded-xl m-1 w-full border">
@@ -60,15 +61,15 @@ if(post)
 		{/*----------Display the profile details */}
 			<div className="flex justify-between items-center p-1">
 				<button onClick={(e) => {
-					navigate(`profile/${profile._id}`)
+					navigate(`profile/${user?._id}`)
 				}}
 					className="flex items-center gap-2">
 					<Image 
 						className="border border-gray-600 h-14 w-14 rounded-full"
-						photo={post.by?.profileImage?.name}
+						photo={user?.profileImage}
 						/>
 					<span className="flex flex-col items-start px-2 opacity-80">
-						<span className="text-lg">{post.by?.name}</span>
+						<span className="text-lg">{user?.name}</span>
 						<span className="text-gray-300 text-xs">{`${time[2]} ${time[1]}, ${time[4]}`}</span>
 					</span>
 				</button>
@@ -81,7 +82,7 @@ if(post)
 			</div>
 
 		{/*----------Display all the images using next scroll approach---------*/}
-			{post.photos.length>0 && <div className="flex p-2 justify-between items-center">
+			{post.photos && post.photos.length>0 && <div className="flex p-2 justify-between items-center">
 				{post.photos.length> 1 && <button onClick={(e) => {
 					e.preventDefault(); 
 					setImgIdx((imgIdx-1+photos.length)%(photos.length))

@@ -4,8 +4,7 @@ import {UserContext} from '../userContext'
 import axios from 'axios'
 import Image from './image'
 import UpdateProfileModal from './updateProfileModal'
-import profile from '../../public/images/profile.webp'
-
+import profile from '../images/profile.webp'
 
 const Header = ({user}) => {
   if(!user) return null; 
@@ -45,9 +44,9 @@ const Header = ({user}) => {
       const response = await axios.post('/upload/images', data , { withCredentials:true }); 
       if(response?.data) {
         const imagePath = response.data.images[0] 
-        console.log({response})
+        // console.log({response})
         let updatedUser = user 
-        if(type === 'profile')updatedUser.profileImage = imagePath // updated profile image 
+        if(type === 'profile')updatedUser.profileImage = imagePath 
         else if(type === 'cover') updatedUser.coverImage = imagePath 
         const uploadResponse = await axios.post('/user/update' , {
           user:updatedUser 
@@ -86,7 +85,7 @@ const Header = ({user}) => {
                     <img className="w-full object-cover h-64 rounded-md"
                       src={coverImage.preview} alt="cover-preview"/>
                   ):(
-                    <Image photo={user?.coverImage?.name}
+                    <Image photo={user?.coverImage}
                       className="w-full object-cover h-64 rounded-md"
                       alt="cover-image"
                       />
@@ -116,14 +115,14 @@ const Header = ({user}) => {
             
 
               <div className="absolute bottom-0 flex gap-2 justify-between w-full translate-y-[103%]">
-                <div className="flex justify-between translate-x-6"> 
-                  <div className="flex -translate-y-[40%] translate-x-2">
+                <div className="flex justify-between translate-x-[8%]"> 
+                  <div className="flex -translate-y-[40%] translate-x-[3%]">
                     {profileImage?.image ? (
-                      <img className="w-32 h-32 object-cover rounded-full border-8 border-gray-300"
+                      <img className="w-36 h-36 object-cover rounded-full border-8 border-gray-300"
                         src={profileImage.preview} alt="profile-preview"/>
-                    ): user?.profileImage?.name ? (
-                      <Image photo={user?.profileImage?.name}
-                        className="w-36 h-36 object-cover rounded-full border-8 border-gray-900"
+                    ): user?.profileImage? (
+                      <Image photo={user?.profileImage}
+                        className="w-36 h-36 object-cover rounded-full border-[4px] border-gray-900"
                         alt="profile-image"
                         />
                     ):(
@@ -160,10 +159,11 @@ const Header = ({user}) => {
                       @{user.username}
                     </span>
                     <span className="text-sm mt-1">
-                      {profile?.bio}
+                      {/*{profile?.bio}*/}
                     </span>
                   </div>
                 </div>
+                {isSame?(
                   <div className="py-6">
                     <button onClick={openModal}
                       className="text-indigo-400 hover:text-indigo-500">
@@ -173,6 +173,11 @@ const Header = ({user}) => {
                       </svg>
                     </button>
                 </div>
+              ):(
+                <div>
+                  
+                </div>
+              )}
               </div>
 
             </div>
