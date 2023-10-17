@@ -91,7 +91,7 @@ export const login = async (req, res) => {
                 withCredentials: true,
                 httpOnly: true,
                 maxAge: values.time,
-                secure: false,   
+                secure: true,   
             });
 
             console.log({user})
