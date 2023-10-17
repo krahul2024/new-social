@@ -102,7 +102,7 @@ const NewPost = ({type}) => {
 				<div className="relative">
 				  <NavLink to={`/profile/${profile?._id}`} className="absolute left-2 top-2 border border-gray-600 rounded-full">
 				    	<Image 
-				    		photo={profile?.profileImage?.name}
+				    		photo={profile?.profileImage}
 				    		className="h-10 w-10 object-cover rounded-full"
 				    		/>
 				  </NavLink>

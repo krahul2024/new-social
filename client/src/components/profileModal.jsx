@@ -3,17 +3,6 @@ import {useNavigate} from 'react-router-dom';
 import axios from 'axios'
 import {UserContext} from '../userContext'
 
-/* 
-This modal contains following items 
-1. View profile
-2. Update profile
-3. Connections
-4. Groups
-5. Likes
-6. Posts
-7. Media 
-
-*/
 
 const Auth = ({ onClose }) => {
   const navigate = useNavigate(); 

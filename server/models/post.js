@@ -8,11 +8,7 @@ const postSchema = new Schema({
     title: String,
     caption: String,
     photos: [{
-        pad:String, 
-        original:String, 
-        size : Number,
-        encoding:String,
-        ext:String, 
+        type:String
     }],
     comments: [{
         type: Schema.Types.ObjectId,

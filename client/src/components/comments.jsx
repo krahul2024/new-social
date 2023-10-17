@@ -69,7 +69,7 @@ const Comments = () => {
         {photos.map((photo, idx) => (
             <Image key={idx}
               className="object-cover h-36 rounded w-40"
-              photo={photo?.name}
+              photo={photo}
               />
         ))}
       </div>
@@ -84,7 +84,7 @@ const Comments = () => {
             <NavLink className="flex gap-2 text-sm items-center" to={`/profile/${comment.by?._id}`}>
               <Image 
                 className={`h-12 w-12 rounded-full p-1`}
-                photo={comment.by?.profileImage?.name}
+                photo={comment.by?.profileImage}
                 />
               <div className="flex flex-col">
                 <span>{comment.by?.name}</span>

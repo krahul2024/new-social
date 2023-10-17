@@ -7,8 +7,8 @@ const userSchema = new Schema({
     email: String,
     username: String,
     password: String,
-    profileImage: {},
-    coverImage: {},
+    profileImage: String,
+    coverImage: String,
     connections: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -39,6 +39,10 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId, 
         ref:'Post'
     }],
+    blocked:[{
+        type:Schema.Types.ObjectId, 
+        ref:'User'
+    }], 
     // settings:{}
 }, { timestamps: true });
 

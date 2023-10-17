@@ -7,7 +7,8 @@ import {UserContextProvider} from './userContext'
 import Profile from './components/profile'
 import PostPage from './components/postPage'
 
-axios.defaults.baseURL = 'http://localhost:4000' 
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+axios.defaults.withCredentials = true ; 
 
 function App() {
   const [count, setCount] = useState(0)

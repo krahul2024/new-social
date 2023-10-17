@@ -42,7 +42,7 @@ const Feed = () => {
       	<NewPost type={'post'}/>
         <div className="px-2 py-2 ">
           {posts && posts.length>0 && posts.map((post, index) => (
-            <Post key={index} post={post}/> 
+            <Post key={index} post={post} user={post.by}/> 
           ))}
         </div>
       	

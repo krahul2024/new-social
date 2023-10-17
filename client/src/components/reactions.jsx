@@ -1,10 +1,12 @@
 import React, {useState, useContext, useEffect} from 'react'; 
-import {NavLink} from 'react-router-dom';
+import {NavLink, useLocation} from 'react-router-dom';
 import {UserContext} from '../userContext'; 
-import PostModal from './postModal'
 import axios from 'axios'
 
 const Reactions = ({post}) => {
+	const location = useLocation(); 
+	const path = location.pathname; 
+
 	const {currPost, setCurrPost, profile, isHome, setIsHome, posts, setPosts, setProfile} = useContext(UserContext);
 	if(!post) return null; 
 
@@ -12,6 +14,7 @@ const Reactions = ({post}) => {
 	const [likes, setLikes] = useState(post.likes?.length || 0)
 	const [comments, setComments] = useState(post.comments || []); 
 	const [saved, setSaved] = useState(profile?.savedPosts?.includes(post?._id?.toString())); 
+	const [updatedPost, setUpdatedPost] = useState(post); 
 
 	const getPost = async() => {
 		try{
@@ -27,19 +30,20 @@ const Reactions = ({post}) => {
 	const likePost = async(e) => {
 		e.preventDefault(); 
 		if(!profile) return ; 
-		console.log(post._id, profile._id)
+		// console.log(post._id, profile._id)k
+		console.log('liked')
 		try{
 			const response = await axios.post('/post/like', {
 				postId:post._id, userId: profile._id
 			}, {withCredentials : true })
 			if(response?.data){
 				const postResponse = response.data.post; 
-				// console.log({postResponse}); 
+				console.log({postResponse}); 
 				setCurrPost(postResponse); 
+				setUpdatedPost(postResponse); 
 				setLikes(postResponse.likes.length)
 				setIsLiked(postResponse.likes.includes(profile._id));
 			}
-
 		}catch(error){
 			console.log({error}); 
 		}
@@ -66,17 +70,17 @@ const Reactions = ({post}) => {
 	}
 
 	useEffect(() => {
-		if(isHome){
-			setComments(post.comments); 
-			setLikes(post.likes?.length); 
-			setIsLiked(post.likes?.includes(profile?._id.toString()));
-			setSaved(profile?.savedPosts.includes(post?._id.toString())); 
-		}
-		else{
+		if(path.includes('post')){
 			setComments(currPost?.comments);
 			setLikes(currPost?.likes?.length); 
 			setIsLiked(currPost?.likes?.includes(profile?._id.toString()));
 			setSaved(profile?.savedPosts.includes(post?._id.toString())); 
+		}
+		else {
+			setComments(updatedPost.comments); 
+			setLikes(updatedPost.likes?.length); 
+			setIsLiked(updatedPost.likes?.includes(profile?._id.toString()));
+			setSaved(profile?.savedPosts.includes(updatedPost?._id.toString())); 
 		}
 	}, [currPost, profile])
 

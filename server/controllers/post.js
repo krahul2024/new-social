@@ -241,23 +241,12 @@ export const newComment = async (req, res) => {
     try {
         const { by, caption, photos, postId } = req.body;
 
-        const images = photos.map((photo) => {
-            const { name: { pad, original }, size, type, ext, encoding } = photo;
-            return {
-                name:{pad, original}, 
-                size,
-                type,
-                ext,
-                encoding,
-            };
-        });
-
-        console.log('Images from New Comment creation:', images);
+        console.log('Images from New Comment creation:', photos);
 
         const newComment = new Comment({
             by,
             caption,
-            photos: images,
+            photos,
         });
 
         console.log({newComment, by})
@@ -335,24 +324,12 @@ export const newPost = async (req, res) => {
     connect_database();
     try {
         const { by, caption, photos } = req.body;
+        console.log('Images from New post creation : ', photos);
 
-        const images = [];
-        for (let i = 0; i < photos?.length; i++) {
-            const { name: { pad, original }, size, type, ext, encoding } = photos[i];
-            images.push({
-                pad,
-                original,
-                size,
-                type,
-                ext,
-                encoding
-            })
-        }
-        console.log('Images from New post creation : ', images);
         const newPost = new Post({
             by,
             caption,
-            photos: images,
+            photos,
         });
 
         const user = await User.findById(by)
